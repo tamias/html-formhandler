@@ -24,7 +24,7 @@ has 'field_list' => ( isa => 'HashRef|ArrayRef', is => 'rw', default => sub { {}
 has 'build_include_method' => ( is => 'ro', isa => 'CodeRef', traits => ['Code'],
     default => sub { \&default_build_include  }, handles => { build_include => 'execute_method' } );
 has 'include' => ( is => 'rw', isa => 'ArrayRef', traits => ['Array'], builder => 'build_include',
-    handles => { has_include => 'count' } );
+    lazy => 1, handles => { has_include => 'count' } );
 sub default_build_include { [] }
 
 sub has_field_list {
