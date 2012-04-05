@@ -56,7 +56,6 @@ sub _build_fields {
     $self->_process_field_array( $meta_flist, 0 ) if $meta_flist;
     my $flist = $self->has_field_list;
     if( $flist ) {
-        $flist = clone($flist);
         if( ref($flist) eq 'ARRAY' && ref( $flist->[0] ) eq 'HASH' ) {
             $self->_process_field_array( $flist );
         }
@@ -97,9 +96,7 @@ sub _build_meta_field_list {
             }
         }
     }
-
-    # must clone field_list to avoid shared copies of field definitions
-    return clone($field_list) if scalar @$field_list;
+    return $field_list if scalar @$field_list;
 }
 
 sub _process_field_list {
@@ -130,16 +127,16 @@ sub _array_fields {
 sub _process_field_array {
     my ( $self, $fields ) = @_;
 
+    # clone and, optionally, filter fields
+    $fields = $self->clean_fields( $fields );
     # the point here is to process fields in the order parents
     # before children, so we process all fields with no dots
     # first, then one dot, then two dots...
-    my %include = $self->has_include ? map { $_ => 1 } @{ $self->include } : ();
-    my $num_fields   = $self->has_include ? $self->has_include : scalar @$fields;
+    my $num_fields   = scalar @$fields;
     my $num_dots     = 0;
     my $count_fields = 0;
     while ( $count_fields < $num_fields ) {
         foreach my $field (@$fields) {
-            next if $self->has_include && ! $include{$field->{name}};
             my $count = ( $field->{name} =~ tr/\.// );
             next unless $count == $num_dots;
             $self->_make_field($field);
@@ -147,6 +144,19 @@ sub _process_field_array {
         }
         $num_dots++;
     }
+}
+
+sub clean_fields {
+    my ( $self, $fields ) = @_;
+    if( $self->has_include ) {
+        my @fields;
+        my %include = map { $_ => 1 } @{ $self->include };
+        foreach my $fld ( @$fields ) {
+            push @fields, clone($fld) if exists $include{$fld->{name}};
+        }
+        return \@fields;
+    }
+    return clone( $fields );
 }
 
 # Maps the field type to a field class, finds the parent,
