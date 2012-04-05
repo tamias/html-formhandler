@@ -24,6 +24,6 @@ use Test::More;
 }
 
 my $form = Test::Form->new;
-is( $form->num_fields, 4, 'right nubmer of fields' );
+is( $form->num_fields, 4, 'right number of fields' );
 
 done_testing;
