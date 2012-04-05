@@ -21,6 +21,10 @@ has 'fields_from_model' => ( isa => 'Bool', is => 'rw' );
 
 has 'field_list' => ( isa => 'HashRef|ArrayRef', is => 'rw', default => sub { {} } );
 
+has 'include' => ( is => 'rw', isa => 'ArrayRef', traits => ['Array'], builder => 'build_include',
+    handles => { has_include => 'count' } );
+sub build_include { [] }
+
 sub has_field_list {
     my ( $self, $field_list ) = @_;
     $field_list ||= $self->field_list;
@@ -127,11 +131,13 @@ sub _process_field_array {
     # the point here is to process fields in the order parents
     # before children, so we process all fields with no dots
     # first, then one dot, then two dots...
-    my $num_fields   = scalar @$fields;
+    my %include = $self->has_include ? map { $_ => 1 } @{ $self->include } : ();
+    my $num_fields   = $self->has_include ? $self->has_include : scalar @$fields;
     my $num_dots     = 0;
     my $count_fields = 0;
     while ( $count_fields < $num_fields ) {
         foreach my $field (@$fields) {
+            next if $self->has_include && ! $include{$field->{name}};
             my $count = ( $field->{name} =~ tr/\.// );
             next unless $count == $num_dots;
             $self->_make_field($field);
