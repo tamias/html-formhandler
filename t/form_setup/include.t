@@ -2,6 +2,8 @@ use strict;
 use warnings;
 use Test::More;
 
+# Test using the 'include' attribute for building fields
+# to skip the build overhead for unused fields.
 {
     package Test::Form::Fields;
     use HTML::FormHandler::Moose::Role;
