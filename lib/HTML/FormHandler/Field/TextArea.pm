@@ -9,7 +9,7 @@ has '+widget' => ( default => 'Textarea' );
 has 'cols'    => ( isa     => 'Int', is => 'rw' );
 has 'rows'    => ( isa     => 'Int', is => 'rw' );
 
-=head1 Summary
+=head1 SYNOPSIS
 
 For HTML textarea. Uses 'textarea' widget. Set cols/row/minlength/maxlength.
 

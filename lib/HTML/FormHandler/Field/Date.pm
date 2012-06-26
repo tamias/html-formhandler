@@ -7,7 +7,7 @@ use DateTime;
 use DateTime::Format::Strptime;
 our $VERSION = '0.03';
 
-=head1 SUMMARY
+=head1 SYNOPSIS
 
 This field may be used with the jQuery Datepicker plugin.
 

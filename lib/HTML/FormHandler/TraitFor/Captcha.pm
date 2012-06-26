@@ -42,7 +42,7 @@ sub get_captcha {
     return $captcha;
 }
 
-=head1 set_captcha
+=head2 set_captcha
 
 Set a captcha in C<< $self->ctx->{session} >>
 
